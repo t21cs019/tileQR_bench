@@ -1,0 +1,24 @@
+# 計測成果物
+results/benchmark/*.csv
+logs/*.log
+specs/*.txt
+
+# ビルド成果物・一時ファイル
+*.o
+*.so
+__pycache__/
+*.pyc
+
+# 環境
+.venv/
+.env
+
+# OS
+.DS_Store
+
+# probe の一時ファイル
+results/benchmark/_probe_*.csv
+
+!results/benchmark/.gitkeep
+!logs/.gitkeep
+!specs/.gitkeep
