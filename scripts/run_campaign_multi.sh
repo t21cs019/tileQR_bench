@@ -29,6 +29,11 @@ HOSTNAME_SHORT="$(hostname -s)"
 TS="$(date +%Y%m%d_%H%M%S)"
 LOG="${REPO_ROOT}/logs/${HOSTNAME_SHORT}_multi_t${TRIALS}_${TS}.log"
 mkdir -p "${REPO_ROOT}/logs"
+mkdir -p "${REPO_ROOT}/results/benchmark"
+
+# THREADS 未指定なら benchmark.py の既定（os.cpu_count）に任せる。
+# 指定された場合は --threads を渡し、出力ファイル名にもスレッド数を入れる。
+THREADS="${THREADS:-}"
 
 if ! command -v tmux &>/dev/null; then
     echo "[ERROR] tmux が見つかりません。 sudo apt install -y tmux で導入してください。"
@@ -45,8 +50,16 @@ fi
 # 各サイズを順番に流すコマンドを組み立てる
 INNER="cd '${REPO_ROOT}'"
 for SZ in ${SIZES}; do
-    INNER="${INNER} && echo '======== SIZE=${SZ} 計測開始 \$(date) ========' \
-&& bash run_benchmark.sh --size ${SZ} --nb-min ${NB_MIN} --nb-max ${NB_MAX} --step ${STEP} --trials ${TRIALS}"
+    THREAD_OPT=""
+    OUT_OPT=""
+    if [ -n "${THREADS}" ]; then
+        THREAD_OPT="--threads ${THREADS}"
+        # スレッド数をファイル名に明示（8T/4T を取り違えないため）
+        OUT="${REPO_ROOT}/results/benchmark/${HOSTNAME_SHORT}_size${SZ}_nb${NB_MIN}-${NB_MAX}_th${THREADS}_t${TRIALS}_${TS}.csv"
+        OUT_OPT="--output '${OUT}'"
+    fi
+    INNER="${INNER} && echo '======== SIZE=${SZ} threads=${THREADS:-auto} 計測開始 \$(date) ========' \
+&& bash run_benchmark.sh --size ${SZ} --nb-min ${NB_MIN} --nb-max ${NB_MAX} --step ${STEP} --trials ${TRIALS} ${THREAD_OPT} ${OUT_OPT}"
 done
 INNER="${INNER} && echo '======== 全サイズ完了 \$(date) ========'"
 
@@ -57,6 +70,7 @@ echo "======================================================"
 echo " 複数サイズ計測を tmux セッション '${SESSION}' で開始"
 echo "   host   : ${HOSTNAME_SHORT}"
 echo "   sizes  : ${SIZES}（この順に逐次実行）"
+echo "   threads: ${THREADS:-auto（os.cpu_count）}"
 echo "   nb     : ${NB_MIN}〜${NB_MAX} step=${STEP}"
 echo "   trials : ${TRIALS}"
 echo "   log    : ${LOG}"
