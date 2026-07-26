@@ -1,5 +1,15 @@
 # tileQR_bench
 
+> ⚠️ **このリポジトリは凍結（アーカイブ）されました。**
+> 計測機能は [`plasma-perf`](https://github.com/t21cs019/plasma-perf) に統合済みです。
+> 今後の計測・修正・機能追加はすべて **plasma-perf 側**で行ってください。
+> 本リポジトリは計測履歴の参照用に残しています（読み取り専用）。
+>
+> - フルQR計測（旧 `src/benchmark.py`）→ `plasma-perf` の `python -m plasma_perf bench tileqr`
+> - 環境ビルド（旧 `setup/`）→ [`plasma-workspace`](https://github.com/t21cs019/plasma-workspace)
+>
+> ---
+
 家庭内Intelマシン群・研究室サーバでのタイルQR分解（PLASMA dgeqrf）計測専用リポジトリ。
 `optuna_tileQR` から **純スイープ計測に特化**して切り出した軽量版。
 
