@@ -1,0 +1,25 @@
+[project]
+name = "tileqr-bench"
+version = "0.1.0"
+description = "PLASMA タイルQR分解（dgeqrf）ベンチマーク・チューニング手法比較"
+readme = "README.md"
+requires-python = ">=3.8"
+# 計測コア（src/）は Python 標準ライブラリのみで動作する。
+dependencies = []
+
+[project.optional-dependencies]
+# tuning/ 用（run_tuning.py 本体・各手法）。指示書6節: optuna・numpy のみ。
+tuning = [
+    "optuna>=4.3.0",
+    "numpy>=1.24",
+]
+# tuning/evaluate.py 専用（オフライン集計）。計測機ではなくデータ側の環境で使う。
+evaluate = [
+    "pandas>=2.0.0",
+    "pyarrow>=14.0",
+]
+
+[tool.uv]
+# src/・tuning/ は pip インストールせず sys.path 経由で直接実行するため、
+# このリポジトリ自体をパッケージとしてビルド・インストールしない。
+package = false
